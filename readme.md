@@ -1,0 +1,1 @@
+This is an implementation of a custom memory allocator library (Inspired from Postgres's memory contexts)
