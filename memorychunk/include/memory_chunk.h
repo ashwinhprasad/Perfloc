@@ -3,19 +3,20 @@
 #define MEMORY_CHUNK_H
 
 #include <stdio.h>
-#include "../collections/vector.h"
 #include <stdbool.h>
 
 #define PAGE_SIZE 4096
-#define INITIAL_NUMBER_OF_PAGES_FOR_ROOT_CHUNK 4
+#define INITIAL_NUMBER_OF_PAGES_FOR_ROOT_CHUNK 8
 #define INITIAL_ROOT_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_ROOT_CHUNK * PAGE_SIZE
-
+#define INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK 1
+#define INITIAL_PROCESS_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK * PAGE_SIZE
+#define MEMORY_CHUNK_HEADER_SIZE_FACTOR 0.1 
 
 typedef struct ObjectMeta {
     void* start_address;
     size_t size;
     bool is_root;
-    ObjectMeta* next_object_meta;
+    struct ObjectMeta* next_object_meta;
 } ObjectMeta;
 
 #define OBJECT_META_SIZE sizeof(ObjectMeta)
@@ -35,7 +36,9 @@ typedef struct MemoryChunk {
 } MemoryChunk;
 
 
-MemoryChunk get_New_Process_Memory_Chunk();
-
+extern MemoryChunk get_new_process_memory_chunk();
+void* perfalloc(MemoryChunk, size_t);
+void perffree(MemoryChunk,void*);
+void drop_memory_chunk(MemoryChunk);
 
 #endif

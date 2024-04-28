@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.10)
+project(Test)
+set(CMAKE_C_STANDARD 17)
+set(SOURCES src/test.c)
+add_executable(test ${SOURCES})
+target_include_directories(test PUBLIC include)
+
+
+find_library(MEMORY_CHUNK_LIB
+    NAMES memorychunk
+    PATHS ../memorychunk/build
+)
+target_include_directories(test PRIVATE ../memorychunk/include)
+target_link_libraries(test PUBLIC ${MEMORY_CHUNK_LIB})
