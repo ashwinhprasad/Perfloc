@@ -1,1 +1,1 @@
-This is an implementation of a custom memory allocator library (Inspired from Postgres's memory contexts)
+This is an implementation of a general-purpose memory allocator library written in C(Inspired by Postgres's memory contexts)
