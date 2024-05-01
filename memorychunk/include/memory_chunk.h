@@ -17,6 +17,7 @@ typedef struct ObjectMeta {
     size_t size;
     bool is_root;
     struct ObjectMeta* next_object_meta;
+    struct ObjectMeta* previous_object_meta;
 } ObjectMeta;
 
 #define OBJECT_META_SIZE sizeof(ObjectMeta)
@@ -26,6 +27,7 @@ typedef struct Header {
     bool is_root;
     size_t mc_size;
     size_t occupied_space;
+    void* root_obj_meta_ptr;
 } Header;
 
 #define MC_HEADER_SIZE sizeof(Header)
@@ -36,7 +38,7 @@ typedef struct MemoryChunk {
 } MemoryChunk;
 
 
-extern MemoryChunk get_new_process_memory_chunk();
+MemoryChunk get_new_process_memory_chunk();
 void* perfalloc(MemoryChunk, size_t);
 void perffree(MemoryChunk,void*);
 void drop_memory_chunk(MemoryChunk);

@@ -35,20 +35,20 @@ void* vector_get(Vector vec, int elem_idx)
 
 
 
-void vector_add(Vector vec, void* element)
+void vector_add(Vector* vec, void* element)
 {
-    if(vec.number_of_elements >= vec.total_capacity)
+    if(vec->number_of_elements >= vec->total_capacity)
     {
-        vec.ptrs = realloc(vec.ptrs, sizeof(void*) * vec.total_capacity * 2);
-        if (vec.ptrs != NULL)
+        vec->ptrs = realloc(vec->ptrs, sizeof(void*) * vec->total_capacity * 2);
+        if (vec->ptrs != NULL)
         {
-            vec.total_capacity *= 2;
+            vec->total_capacity *= 2;
         }
     }
 
-    void* ptr = vec.ptrs + sizeof(void*) * vec.number_of_elements;
+    void* ptr = vec->ptrs + sizeof(void*) * vec->number_of_elements;
     mempcpy(ptr, &element, sizeof(void*));
-    vec.number_of_elements++;
+    vec->number_of_elements++;
 }
 
 
