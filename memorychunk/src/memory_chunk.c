@@ -11,12 +11,13 @@ bool IS_ROOT_MEM_CHUNK_VEC_INITIALISED = false;
 MemoryChunk get_new_process_memory_chunk()
 {
 
-    /**
-     * The calling program is using the library for the first time. Need to initalize 
-     * the root memory chunk vector and create the current root memory chunk
-    */
+    
     if (!IS_ROOT_MEM_CHUNK_VEC_INITIALISED)
     {
+        /**
+         * The calling program is using the library for the first time. Need to initalize 
+         * the root memory chunk vector and create the current root memory chunk
+        */
         ROOT_MEM_CHUNK_VEC = create_vector(4);
         MemoryChunk* root_memory_chunk = (MemoryChunk*) malloc(sizeof(MemoryChunk));
         root_memory_chunk->memory = (void*)malloc(INITIAL_ROOT_MEMORY_CHUNK_SIZE);
@@ -51,6 +52,7 @@ MemoryChunk get_new_process_memory_chunk()
         rmc_first_object_meta->previous_object_meta = rmc_rom;
         void* ptr_to_first_pmc = root_memory_chunk->memory + (int)(INITIAL_ROOT_MEMORY_CHUNK_SIZE * MEMORY_CHUNK_HEADER_SIZE_FACTOR);
         rmc_first_object_meta->start_address = ptr_to_first_pmc;
+        rmc_first_object_meta->next_object_meta = NULL;
         
         
         Header pmc_header = {
@@ -82,6 +84,10 @@ MemoryChunk get_new_process_memory_chunk()
     */
 }
 
+void perffree(MemoryChunk mc, void* object, size_t object_size)
+{
+    
+}
 
 
 void* perfalloc(MemoryChunk pmc, size_t size)
@@ -91,7 +97,7 @@ void* perfalloc(MemoryChunk pmc, size_t size)
     size_t memory_chunk_size = pmc_header->mc_size;
     size_t memory_meta_vec_size = memory_chunk_size * MEMORY_CHUNK_HEADER_SIZE_FACTOR;
     void* alloc_region_start_address = memory + memory_meta_vec_size;
-    ObjectMeta* root_object_meta = memory + MC_HEADER_SIZE;
+    ObjectMeta* pmc_rom = memory + MC_HEADER_SIZE;
 
     /**
      * Need to handle the case where memory chunk is not enough
@@ -101,9 +107,12 @@ void* perfalloc(MemoryChunk pmc, size_t size)
 
     }
 
-    // find a space where the memory chunk of the given size can be properly declared
-    ObjectMeta* current_object_meta = root_object_meta;
+    
+    ObjectMeta* current_object_meta = pmc_rom;
     void* previous_object_end_address = NULL;
+    void* previous_object_meta_start_address = NULL;
+    void* next_object_meta_start_address = NULL;
+    void* previous_object_meta_end_address = NULL;
     bool is_object_meta_insertion_location_found = false;
     
     while(current_object_meta != NULL)
@@ -111,21 +120,45 @@ void* perfalloc(MemoryChunk pmc, size_t size)
         if (current_object_meta->is_root)
         {
             previous_object_end_address = alloc_region_start_address;
+            previous_object_meta_end_address = current_object_meta + OBJECT_META_SIZE;
+            previous_object_meta_start_address = current_object_meta;
+            next_object_meta_start_address = current_object_meta->next_object_meta;
         }
-        else if (previous_object_end_address + size < current_object_meta->start_address)
+        else if ((previous_object_end_address + size < current_object_meta->start_address) && (previous_object_meta_end_address + OBJECT_META_SIZE < (void *)current_object_meta))
         {
             break;
         }
         else
         {
             previous_object_end_address = current_object_meta->start_address + current_object_meta->size;
+            previous_object_meta_end_address = current_object_meta + OBJECT_META_SIZE;
+            previous_object_meta_start_address = current_object_meta;
+            next_object_meta_start_address = current_object_meta->next_object_meta;
         }
     
         current_object_meta = current_object_meta->next_object_meta;
     }
+    
+    /**
+     * TODO:Also need to create new object meta for the current object
+    */
+    void* object_meta_location = previous_object_meta_end_address;
+    void* object_location = previous_object_end_address;
 
-    void* location_to_insert = previous_object_end_address;
-    return location_to_insert;
+    ObjectMeta* object_meta = (ObjectMeta*) object_meta_location;
+    object_meta->start_address = object_location;
+    object_meta->is_root = false;
+    object_meta->size = size;
+    object_meta->next_object_meta = next_object_meta_start_address;
+    object_meta->previous_object_meta = previous_object_meta_start_address;
+    object_meta->previous_object_meta->next_object_meta = object_meta;
+    
+    if (object_meta->next_object_meta != NULL)
+    {
+        object_meta->next_object_meta->previous_object_meta = object_meta;
+    }
+    
+    return object_location;
 }
 
 
@@ -141,11 +174,18 @@ void drop_memory_chunk(MemoryChunk pmc)
 {
 
     Header* pmc_header = (Header*) pmc.memory;
-    ObjectMeta* pmc_root_obj_meta = (ObjectMeta*) pmc_header->root_obj_meta_ptr;
+    ObjectMeta* pmc_root_obj_meta = (ObjectMeta*) pmc_header->rmc_om_ptr;
 
     pmc_root_obj_meta->previous_object_meta->next_object_meta = pmc_root_obj_meta->next_object_meta;
+
+    if (pmc_root_obj_meta->next_object_meta == NULL)
+    {
+        /**
+         * Current memory chunks corresponding object meta in the root is the final object meta.
+        */
+        return;
+    }
+
     pmc_root_obj_meta->next_object_meta->previous_object_meta = pmc_root_obj_meta->previous_object_meta;
     
-
-
 }

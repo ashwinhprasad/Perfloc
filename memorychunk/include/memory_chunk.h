@@ -27,20 +27,22 @@ typedef struct Header {
     bool is_root;
     size_t mc_size;
     size_t occupied_space;
-    void* root_obj_meta_ptr;
+    void* rmc_om_ptr;
 } Header;
 
 #define MC_HEADER_SIZE sizeof(Header)
 
 
 typedef struct MemoryChunk {
+    Header* header;
+    ObjectMeta* rom;
     void* memory;
 } MemoryChunk;
 
 
 MemoryChunk get_new_process_memory_chunk();
 void* perfalloc(MemoryChunk, size_t);
-void perffree(MemoryChunk,void*);
+void perffree(MemoryChunk,void*,size_t);
 void drop_memory_chunk(MemoryChunk);
 
 #endif
