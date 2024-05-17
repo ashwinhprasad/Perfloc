@@ -3,3 +3,4 @@ main.c
 a.out
 build/
 temp/
+.cache/
