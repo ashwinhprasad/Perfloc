@@ -4,3 +4,4 @@ a.out
 build/
 temp/
 .cache/
+cmake-build-debug/
