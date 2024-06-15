@@ -4,7 +4,7 @@
 void print_memory_chunk_layout(MemoryChunk mc)
 {
     Header* mc_header = (Header*)mc.memory;
-    size_t mc_size = mc_header->mc_size;
+    size_t mc_size = mc_header->total_size;
 
     ObjectMeta* pmc_rom = (ObjectMeta*)((void*)mc_header + MC_HEADER_SIZE);
 

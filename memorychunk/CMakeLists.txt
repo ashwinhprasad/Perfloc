@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project(memorychunk)
 set(CMAKE_C_STANDARD 17)
 set(SOURCES src/memory_chunk.c src/utils.c)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(memorychunk SHARED ${SOURCES})
 target_include_directories(memorychunk PUBLIC include)
-
 target_include_directories(memorychunk PRIVATE ../collections/include)
 find_library(
     COLLECTIONS_LIB

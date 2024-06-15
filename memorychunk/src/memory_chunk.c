@@ -81,7 +81,7 @@ void* perfalloc(MemoryChunk pmc, size_t size)
 {
 	void* memory = pmc.memory;
 	Header* pmc_header = (Header*) memory;
-	size_t memory_chunk_size = pmc_header->mc_size;
+	size_t memory_chunk_size = pmc_header->total_size;
 	size_t memory_meta_vec_size = memory_chunk_size * MEMORY_CHUNK_HEADER_SIZE_FACTOR;
 	void* alloc_region_start_address = memory + memory_meta_vec_size;
 	ObjectMeta* pmc_rom = memory + MC_HEADER_SIZE;
@@ -104,7 +104,7 @@ void* perfalloc(MemoryChunk pmc, size_t size)
 
 	while(current_object_meta != NULL)
 	{
-		if (current_object_meta->is_root)
+		if (current_object_meta->is_head)
 		{
 			previous_object_end_address = alloc_region_start_address;
 			previous_object_meta_end_address = current_object_meta + OBJECT_META_SIZE;
@@ -161,7 +161,7 @@ void drop_memory_chunk(MemoryChunk pmc)
 {
 
 	Header* pmc_header = (Header*) pmc.memory;
-	ObjectMeta* pmc_root_obj_meta = (ObjectMeta*) pmc_header->rmc_om_ptr;
+	ObjectMeta* pmc_root_obj_meta = (ObjectMeta*) pmc_header->parent_memory_chunk_meta_list_object;
 
 	pmc_root_obj_meta->previous_object_meta->next_object_meta = pmc_root_obj_meta->next_object_meta;
 

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(Test)
 set(CMAKE_C_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SOURCES src/test.c)
 add_executable(test ${SOURCES})
 target_include_directories(test PUBLIC include)
