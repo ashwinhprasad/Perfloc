@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "vector.h"
 
 #define PAGE_SIZE 4096
 #define INITIAL_NUMBER_OF_PAGES_FOR_TOP_CHUNK 8
@@ -12,19 +13,22 @@
 #define INITIAL_PROCESS_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK * PAGE_SIZE
 #define MEMORY_CHUNK_HEADER_SIZE_FACTOR 0.1 
 
-typedef struct ObjectMeta {
-    void* start_address;
+Vector TOP_MEM_CHUNK_VEC;
+bool IS_TOP_MEM_CHUNK_VEC_INITIALISED = false;
+
+typedef struct ChildMeta {
+    void* object_ptr;
     size_t size;
     bool is_head;
-    struct ObjectMeta* next_object_meta;
-    struct ObjectMeta* previous_object_meta;
-} ObjectMeta;
+    struct ChildMeta* next_child_meta;
+    struct ChildMeta* previous_child_meta;
+} ChildMeta;
 
-#define OBJECT_META_SIZE sizeof(ObjectMeta)
+#define CHILD_META_SIZE sizeof(ChildMeta)
 
 
 typedef struct Header {
-    bool is_top_memory_chunk;
+    bool is_top;
     size_t total_size;
     size_t occupied_space;
     void* parent_memory_chunk_meta_list_object;
@@ -35,15 +39,13 @@ typedef struct Header {
 
 typedef struct MemoryChunk {
     Header* header;
-    ObjectMeta* head_object_meta;
+    ChildMeta* head_child_meta;
     void* allocation_start_location;
     void* memory;
 } MemoryChunk;
 
 
-MemoryChunk get_new_process_memory_chunk();
-void* perfalloc(MemoryChunk, size_t);
-void perffree(MemoryChunk,void*,size_t);
+MemoryChunk get_process_memory_chunk();
 void drop_memory_chunk(MemoryChunk);
 
 #endif
