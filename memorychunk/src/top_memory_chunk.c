@@ -1,6 +1,11 @@
 #include "memory_chunk.h"
+#include "vector.h"
 #include <stdlib.h>
 #include <string.h>
+
+
+Vector TOP_MEM_CHUNK_VEC;
+bool IS_TOP_MEM_CHUNK_VEC_INITIALISED = false;
 
 
 /**
@@ -48,7 +53,7 @@ MemoryChunk allocate_pmc_and_return()
         */
 
         if ((current_child_meta + 2 * CHILD_META_SIZE < current_child_meta->next_child_meta)
-            || (current_child_meta->object_ptr + current_child_meta->size < current_child_meta->next_child_meta))
+            || (current_child_meta->object_ptr + current_child_meta->size < (void*)(current_child_meta->next_child_meta)))
         {
             current_child_meta = current_child_meta->next_child_meta;
         }
@@ -59,9 +64,34 @@ MemoryChunk allocate_pmc_and_return()
 	}
 
     void* memory_block = current_child_meta->object_ptr + current_child_meta->size;
+	ChildMeta* child_meta_address = current_child_meta + CHILD_META_SIZE;
 
-    /**
-        Need to create header and head object meta and all those stuff and add to memory block and return.
-        will do tomorrow.
-     */
+	ChildMeta child_meta = {
+		memory_block,
+		INITIAL_PROCESS_MEMORY_CHUNK_SIZE,
+		false,
+		current_child_meta->next_child_meta,
+		current_child_meta,
+	};
+	memcpy(child_meta_address, &child_meta, CHILD_META_SIZE);
+
+
+	Header header = {
+		false,
+		INITIAL_PROCESS_MEMORY_CHUNK_SIZE,
+		0,
+		child_meta_address
+	};
+	memcpy(memory_block, &header, MC_HEADER_SIZE);
+
+
+	void* allocation_start_location = memory_block + (int)(INITIAL_PROCESS_MEMORY_CHUNK_SIZE * 0.1);
+
+	MemoryChunk pmc = {
+		memory_block,
+		memory_block + MC_HEADER_SIZE,
+		allocation_start_location,
+		memory_block
+	};
+	return pmc;
 }
