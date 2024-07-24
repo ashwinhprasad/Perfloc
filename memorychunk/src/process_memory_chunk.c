@@ -1,7 +1,5 @@
 #include "memory_chunk.h"
 #include "vector.h"
-#include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
 #include "top_memory_chunk.h"
 
@@ -17,17 +15,12 @@ MemoryChunk get_process_memory_chunk()
 		*/
 		TOP_MEM_CHUNK_VEC = create_vector(4);
 		MemoryChunk* top_memory_chunk = get_initial_top_memory_chunk();
-		vector_add(&TOP_MEM_CHUNK_VEC, &top_memory_chunk);
+		vector_add(&TOP_MEM_CHUNK_VEC, top_memory_chunk);
 		IS_TOP_MEM_CHUNK_VEC_INITIALISED = true;
 	}
 
 	MemoryChunk process_mem_chunk = allocate_pmc_and_return();
 	return process_mem_chunk;
-
-	/**
-     * 
-     * Need to handle case where top memory chunk size is not enough.
-    */
 }
 
 

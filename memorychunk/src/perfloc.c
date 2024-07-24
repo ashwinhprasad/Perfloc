@@ -1,4 +1,16 @@
-// #include "perfloc.h"
+#include "perfloc.h"
+#include "memory_chunk.h"
+
+MemoryChunk getPerfMem()
+{
+    return get_process_memory_chunk();    
+}
+
+
+void dropPerfMem(MemoryChunk pmc)
+{
+    drop_memory_chunk(pmc);
+}
 
 // void perffree(MemoryChunk mc, void* object, size_t object_size)
 // {

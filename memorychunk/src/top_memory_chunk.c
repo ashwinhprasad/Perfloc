@@ -7,20 +7,18 @@
 Vector TOP_MEM_CHUNK_VEC;
 bool IS_TOP_MEM_CHUNK_VEC_INITIALISED = false;
 
-
 /**
 Creates a new top memory chunk with the necessary meta and returns the pointer to it.
 */
-MemoryChunk* get_initial_top_memory_chunk()
+MemoryChunk* get_top_memory_chunk(size_t tmc_size)
 {
-
 	MemoryChunk* memory_chunk = (MemoryChunk*)malloc(sizeof(MemoryChunk));
-	memory_chunk->memory = malloc(INITIAL_TOP_MEMORY_CHUNK_SIZE);
-	memory_chunk->allocation_start_location = memory_chunk->memory + (int)(INITIAL_TOP_MEMORY_CHUNK_SIZE * 0.1);
+	memory_chunk->memory = malloc(tmc_size);
+	memory_chunk->allocation_start_location = memory_chunk->memory + (int)(tmc_size * 0.1);
 
 	Header header = {
 		true,
-		INITIAL_TOP_MEMORY_CHUNK_SIZE,
+		tmc_size,
 		0,
 		NULL
 	};
@@ -35,15 +33,29 @@ MemoryChunk* get_initial_top_memory_chunk()
 
 	memcpy(memory_chunk->memory,&header, MC_HEADER_SIZE);
 	memcpy(memory_chunk->memory + MC_HEADER_SIZE, &head_object_meta, CHILD_META_SIZE);
+	
+	memory_chunk->header = memory_chunk->memory;
+	memory_chunk->head_child_meta = memory_chunk->memory + MC_HEADER_SIZE;
+	
 	return memory_chunk;
 }
 
 
+MemoryChunk* get_initial_top_memory_chunk()
+{
+	return get_top_memory_chunk(INITIAL_TOP_MEMORY_CHUNK_SIZE);
+}
 
 
 MemoryChunk allocate_pmc_and_return()
 {
-    MemoryChunk* current_top_memory_chunk = vector_get(TOP_MEM_CHUNK_VEC, TOP_MEM_CHUNK_VEC.number_of_elements-1);
+	/**
+     * 
+     * Need to handle case where top memory chunk size is not enough.
+    */
+
+
+    MemoryChunk* current_top_memory_chunk = (MemoryChunk*)vector_get(TOP_MEM_CHUNK_VEC, TOP_MEM_CHUNK_VEC.number_of_elements-1);
 	ChildMeta* current_child_meta = current_top_memory_chunk->head_child_meta;
 
 	while (current_child_meta->next_child_meta != NULL)

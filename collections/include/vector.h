@@ -4,8 +4,12 @@
 
 #define DEFAULT_VEC_SIZE 16
 
+typedef struct Pointer {
+  void* element;
+} Pointer;
+
 typedef struct Vector {
-  void* ptrs;
+  Pointer* pointers;
   int number_of_elements;
   int total_capacity;  
 } Vector;
