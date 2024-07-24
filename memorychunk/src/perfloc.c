@@ -12,11 +12,14 @@ void dropPerfMem(MemoryChunk pmc)
     drop_memory_chunk(pmc);
 }
 
-// void perffree(MemoryChunk mc, void* object, size_t object_size)
-// {
+void perffree(MemoryChunk mc, void* object)
+{
 
-// }
+}
 
+void* perfalloc(MemoryChunk pmc, size_t size) {
+    return NULL;
+}
 
 // void* perfalloc(MemoryChunk pmc, size_t size)
 // {

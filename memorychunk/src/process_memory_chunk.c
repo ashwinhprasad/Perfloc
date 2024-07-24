@@ -24,6 +24,11 @@ MemoryChunk get_process_memory_chunk()
 }
 
 
+void drop_memory_chunk( MemoryChunk pmc)
+{
+	
+}
+
 /**
  * Each memory chunk will hava a pointer to it's object meta stored in the root memory chunk.
  * we traverse to the object meta and simply remove it.
