@@ -99,6 +99,9 @@ MemoryChunk allocate_pmc_and_return()
 
 	void* allocation_start_location = memory_block + (int)(INITIAL_PROCESS_MEMORY_CHUNK_SIZE * 0.1);
 
+	ChildMeta* head_child_meta = (ChildMeta*)(memory_block + MC_HEADER_SIZE);
+	head_child_meta->object_ptr = allocation_start_location;
+
 	MemoryChunk pmc = {
 		memory_block,
 		memory_block + MC_HEADER_SIZE,
