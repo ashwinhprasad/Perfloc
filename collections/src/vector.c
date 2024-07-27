@@ -14,7 +14,7 @@ Vector create_vector_With_Default_Cap()
 Vector create_vector(int number_of_elements) 
 {
     Vector vec = {
-        (void *)malloc(sizeof(void*) * number_of_elements),
+        malloc( sizeof(Pointer) * number_of_elements),
         0,
         number_of_elements
     };
@@ -29,8 +29,8 @@ void* vector_get(Vector vec, int elem_idx)
         return NULL;
     }
 
-    void** elem_address = vec.ptrs + elem_idx * sizeof(void*);
-    return *elem_address;
+    Pointer* pointer = vec.pointers + elem_idx * sizeof(Pointer);
+    return pointer->element;
 }
 
 
@@ -39,20 +39,20 @@ void vector_add(Vector* vec, void* element)
 {
     if(vec->number_of_elements >= vec->total_capacity)
     {
-        vec->ptrs = realloc(vec->ptrs, sizeof(void*) * vec->total_capacity * 2);
-        if (vec->ptrs != NULL)
+        vec->pointers = realloc(vec->pointers, sizeof(Pointer) * vec->total_capacity * 2);
+        if (vec->pointers != NULL)
         {
             vec->total_capacity *= 2;
         }
     }
 
-    void* ptr = vec->ptrs + sizeof(void*) * vec->number_of_elements;
-    mempcpy(ptr, &element, sizeof(void*));
+    Pointer* ptr = vec->pointers + sizeof(Pointer) * vec->number_of_elements;
+    ptr->element = element;
     vec->number_of_elements++;
 }
 
 
 void free_vec(Vector vec) 
 {
-    free(vec.ptrs);
+    free(vec.pointers);
 }

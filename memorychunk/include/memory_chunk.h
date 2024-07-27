@@ -6,15 +6,15 @@
 #include <stdbool.h>
 #include "vector.h"
 
-#define PAGE_SIZE 4096
+#define PAGE_SIZE (size_t)4096
 #define INITIAL_NUMBER_OF_PAGES_FOR_TOP_CHUNK 8
-#define INITIAL_TOP_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_TOP_CHUNK * PAGE_SIZE
+#define INITIAL_TOP_MEMORY_CHUNK_SIZE (size_t)INITIAL_NUMBER_OF_PAGES_FOR_TOP_CHUNK * PAGE_SIZE
 #define INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK 1
 #define INITIAL_PROCESS_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK * PAGE_SIZE
 #define MEMORY_CHUNK_HEADER_SIZE_FACTOR 0.1 
 
-Vector TOP_MEM_CHUNK_VEC;
-bool IS_TOP_MEM_CHUNK_VEC_INITIALISED = false;
+extern Vector TOP_MEM_CHUNK_VEC;
+extern bool IS_TOP_MEM_CHUNK_VEC_INITIALISED;
 
 typedef struct ChildMeta {
     void* object_ptr;
@@ -31,7 +31,7 @@ typedef struct Header {
     bool is_top;
     size_t total_size;
     size_t occupied_space;
-    void* parent_memory_chunk_meta_list_object;
+    ChildMeta* parent_memory_chunk_meta_list_object;
 } Header;
 
 #define MC_HEADER_SIZE sizeof(Header)

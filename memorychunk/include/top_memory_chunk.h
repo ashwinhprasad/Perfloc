@@ -6,5 +6,6 @@
 
 MemoryChunk allocate_pmc_and_return();
 MemoryChunk* get_initial_top_memory_chunk();
+MemoryChunk* get_top_memory_chunk();
 
 #endif

@@ -1,23 +1,19 @@
-#include "memory_chunk.h"
 #include <assert.h>
-#include "utils.h"
+#include "perfloc.h"
 
+
+typedef struct custom_type {
+    int a;
+    int arr[10];
+} custom_type;
 
 int main()
 {
-    MemoryChunk mc = get_new_process_memory_chunk();
-
-    print_memory_chunk_layout(mc);
-
-    int* a = (int*)perfalloc(mc, sizeof(int));
-    *a = 20;
-    
-    print_memory_chunk_layout(mc);
-
-    char* b = (char*)perfalloc(mc, sizeof(char));
-
-    print_memory_chunk_layout(mc);
-
-    drop_memory_chunk(mc);
+    MemoryChunk pmc = getPerfMem();
+    custom_type* type = (custom_type*)perfalloc(pmc, sizeof(custom_type));
+    type->a = 10;
+    type->arr[0] = 1;
+    perffree(pmc, type);
+    dropPerfMem(pmc);
     return 0;
 }
