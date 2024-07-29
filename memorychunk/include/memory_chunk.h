@@ -39,6 +39,7 @@ typedef struct Header {
 
 typedef struct MemoryChunk {
     Header* header;
+    Header* parent_header;
     ChildMeta* head_child_meta;
     void* allocation_start_location;
     void* memory;

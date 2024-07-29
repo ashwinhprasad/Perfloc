@@ -24,34 +24,10 @@ MemoryChunk get_process_memory_chunk()
 }
 
 
-void drop_memory_chunk( MemoryChunk pmc)
+
+void drop_memory_chunk(MemoryChunk pmc)
 {
-	
+	pmc.head_child_meta->previous_child_meta->next_child_meta = pmc.head_child_meta->next_child_meta;
+	pmc.head_child_meta->next_child_meta->previous_child_meta = pmc.head_child_meta->previous_child_meta;
+	pmc.parent_header->total_size -= pmc.header->total_size;
 }
-
-/**
- * Each memory chunk will hava a pointer to it's object meta stored in the root memory chunk.
- * we traverse to the object meta and simply remove it.
- * 
- * To remove an object meta, previous object meta's next pointer needs to be pointed directly to the
- * current object meta's next pointer.
-*/
-// void drop_memory_chunk(MemoryChunk pmc)
-// {
-
-// 	Header* pmc_header = (Header*) pmc.memory;
-// 	ChildMeta* pmc_root_obj_meta = (ChildMeta*) pmc_header->parent_memory_chunk_meta_list_object;
-
-// 	pmc_root_obj_meta->previous_object_meta->next_object_meta = pmc_root_obj_meta->next_object_meta;
-
-// 	if (pmc_root_obj_meta->next_object_meta == NULL)
-// 	{
-// 		/**
-// 	 * Current memory chunks corresponding object meta in the root is the final object meta.
-// 	*/
-// 		return;
-// 	}
-
-// 	pmc_root_obj_meta->next_object_meta->previous_object_meta = pmc_root_obj_meta->previous_object_meta;
-
-// }

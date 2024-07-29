@@ -6,6 +6,7 @@
 
 typedef struct AllocObjHeader {
     size_t size;
+    Header* pmc_header;
     ChildMeta* pmc_meta_list_object;
 } AllocObjHeader;
 
