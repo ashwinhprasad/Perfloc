@@ -15,6 +15,7 @@ MemoryChunk* get_top_memory_chunk(size_t tmc_size)
 	MemoryChunk* memory_chunk = (MemoryChunk*)malloc(sizeof(MemoryChunk));
 	memory_chunk->memory = malloc(tmc_size);
 	memory_chunk->allocation_start_location = memory_chunk->memory + (int)(tmc_size * 0.1);
+	memory_chunk->parent_header = NULL;
 
 	Header header = {
 		true,
@@ -83,7 +84,7 @@ MemoryChunk allocate_pmc_and_return()
 		INITIAL_PROCESS_MEMORY_CHUNK_SIZE,
 		false,
 		current_child_meta->next_child_meta,
-		current_child_meta,
+		current_child_meta
 	};
 	memcpy(child_meta_address, &child_meta, CHILD_META_SIZE);
 
@@ -101,12 +102,15 @@ MemoryChunk allocate_pmc_and_return()
 
 	ChildMeta* head_child_meta = (ChildMeta*)(memory_block + MC_HEADER_SIZE);
 	head_child_meta->object_ptr = allocation_start_location;
+	head_child_meta->is_head = true;
 
 	MemoryChunk pmc = {
 		memory_block,
+		current_top_memory_chunk->header,
 		memory_block + MC_HEADER_SIZE,
 		allocation_start_location,
 		memory_block
 	};
+	current_top_memory_chunk->header->occupied_space += pmc.header->total_size;
 	return pmc;
 }

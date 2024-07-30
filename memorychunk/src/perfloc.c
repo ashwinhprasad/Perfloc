@@ -17,29 +17,27 @@ void dropPerfMem(MemoryChunk pmc)
     Every object has an associated alloc object header before it. the void* object here
     represents the actual object and not the header.
 
-    In the deletion operation, we trace back to the corresponding child meta in the process
-    memory chunk and remove it.  
+    In the deletion operation, we trace back to the corresponding child meta in the 
+    process memory chunk and remove it.  
 */
 void perffree(MemoryChunk mc, void* object)
 {
     AllocObjHeader* object_header = (AllocObjHeader*)(object - ALLOC_OBJECT_SIZE);
     ChildMeta* child_meta = object_header->pmc_meta_list_object;
 
-    child_meta->next_child_meta->previous_child_meta = child_meta->previous_child_meta;
-    child_meta->previous_child_meta->next_child_meta = child_meta->next_child_meta;
-
-    /*
-    TODO: Traverse back to process memory chunks header and reduce the 
-    size of the object. We can traverse to the process memory chunk's header through
-    2 approaches.
-
-    i) Store a back pointer to pmc's header
-    
-    ii) Get to the corresponding child object meta a traverse the linked list back
-    to the pmc's header :((
-
-    memory vs speed tradeoff. will decide what to do next;
-    */
+    if (child_meta->next_child_meta != NULL)
+    {
+        /*
+        This is the lastly allocated object in the process memory chunk
+        */
+        child_meta->next_child_meta->previous_child_meta = child_meta->previous_child_meta;
+        child_meta->previous_child_meta->next_child_meta = child_meta->next_child_meta;
+    }
+    else 
+    {
+        child_meta->previous_child_meta->next_child_meta = NULL;
+    }
+    object_header->pmc_header->occupied_space -= object_header->size;
 }
 
 void* perfalloc(MemoryChunk pmc, size_t object_size) 
@@ -67,6 +65,7 @@ void* perfalloc(MemoryChunk pmc, size_t object_size)
 
     AllocObjHeader alloc_obj = {
         allocating_object_size,
+        header,
         object_child_meta
     };
     memcpy(object_alloc_address, &alloc_obj, ALLOC_OBJECT_SIZE);
@@ -81,5 +80,6 @@ void* perfalloc(MemoryChunk pmc, size_t object_size)
     object_child_meta->object_ptr = object_alloc_address;
     object_child_meta->is_head = false;
     object_child_meta->size = allocating_object_size;
+    header->occupied_space += allocating_object_size;
     return object_alloc_address + ALLOC_OBJECT_SIZE;
 }
