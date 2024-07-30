@@ -23,14 +23,13 @@ void print_memory_chunk_layout(MemoryChunk mc)
     Header* header = mc.header;
     printf("Header details\n");
     printf("_________________\n");
-    printf("is_top: %d\ntotal_size: %zu\noccupied_space%zu\n",
+    printf("is_top: %d\ntotal_size: %zu\noccupied_space: %zu\n",
         header->is_top, header->total_size, header->occupied_space);
     printf("__________________\n");
     printf("allocation_start_address: %p\n",mc.allocation_start_location);
 
     int number_of_children = 0;
     ChildMeta* current_node = mc.head_child_meta;
-    Vector vec = create_vector_with_default_cap();
     while (current_node->next_child_meta != NULL) 
     {
         ChildMeta* node = current_node->next_child_meta;
@@ -42,5 +41,5 @@ void print_memory_chunk_layout(MemoryChunk mc)
         current_node = node;
     }
     printf("__________________\n");
-    printf("number_of_children: %d", number_of_children);
+    printf("number_of_children: %d\n", number_of_children);
 }

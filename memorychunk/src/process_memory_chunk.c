@@ -27,7 +27,10 @@ MemoryChunk get_process_memory_chunk()
 
 void drop_memory_chunk(MemoryChunk pmc)
 {
-	pmc.head_child_meta->previous_child_meta->next_child_meta = pmc.head_child_meta->next_child_meta;
-	pmc.head_child_meta->next_child_meta->previous_child_meta = pmc.head_child_meta->previous_child_meta;
+	pmc.header->parent_memory_chunk_meta_list_object->previous_child_meta->next_child_meta = pmc.head_child_meta->next_child_meta;
+	if (pmc.header->parent_memory_chunk_meta_list_object->next_child_meta !=  NULL)
+	{
+		pmc.header->parent_memory_chunk_meta_list_object->next_child_meta->previous_child_meta = pmc.head_child_meta->previous_child_meta;
+	}
 	pmc.parent_header->total_size -= pmc.header->total_size;
 }

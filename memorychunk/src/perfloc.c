@@ -25,9 +25,18 @@ void perffree(MemoryChunk mc, void* object)
     AllocObjHeader* object_header = (AllocObjHeader*)(object - ALLOC_OBJECT_SIZE);
     ChildMeta* child_meta = object_header->pmc_meta_list_object;
 
-    child_meta->next_child_meta->previous_child_meta = child_meta->previous_child_meta;
-    child_meta->previous_child_meta->next_child_meta = child_meta->next_child_meta;
-
+    if (child_meta->next_child_meta != NULL)
+    {
+        /*
+        This is the lastly allocated object in the process memory chunk
+        */
+        child_meta->next_child_meta->previous_child_meta = child_meta->previous_child_meta;
+        child_meta->previous_child_meta->next_child_meta = child_meta->next_child_meta;
+    }
+    else 
+    {
+        child_meta->previous_child_meta->next_child_meta = NULL;
+    }
     object_header->pmc_header->occupied_space -= object_header->size;
 }
 

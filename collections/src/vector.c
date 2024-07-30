@@ -5,7 +5,7 @@
 
 
 
-Vector create_vector_With_Default_Cap()
+Vector create_vector_with_default_cap()
 {
     return create_vector(DEFAULT_VEC_SIZE);
 }
