@@ -4,7 +4,7 @@
 #include "top_memory_chunk.h"
 
 
-MemoryChunk get_process_memory_chunk()
+MemoryChunk get_process_memory_chunk(size_t pmc_size)
 {
 
 	if (!IS_TOP_MEM_CHUNK_VEC_INITIALISED)
@@ -19,12 +19,14 @@ MemoryChunk get_process_memory_chunk()
 		IS_TOP_MEM_CHUNK_VEC_INITIALISED = true;
 	}
 
-	MemoryChunk process_mem_chunk = allocate_pmc_and_return();
+	MemoryChunk process_mem_chunk = allocate_pmc_and_return(pmc_size);
 	return process_mem_chunk;
 }
 
 
-
+/*
+	Will drop a memory chunk along with all the associated memory chunks recursively.
+*/
 void drop_memory_chunk(MemoryChunk pmc)
 {
 	pmc.header->parent_memory_chunk_meta_list_object->previous_child_meta->next_child_meta = pmc.head_child_meta->next_child_meta;
@@ -33,4 +35,10 @@ void drop_memory_chunk(MemoryChunk pmc)
 		pmc.header->parent_memory_chunk_meta_list_object->next_child_meta->previous_child_meta = pmc.head_child_meta->previous_child_meta;
 	}
 	pmc.parent_header->total_size -= pmc.header->total_size;
+
+	MemoryChunk* associated_pmc = pmc.associated_next_pmc;
+	while (pmc.associated_next_pmc != NULL)
+	{
+		drop_memory_chunk(*associated_pmc);
+	}
 }
