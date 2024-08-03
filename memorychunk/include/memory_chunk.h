@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "vector.h"
 
 #define PAGE_SIZE (size_t)4096
 #define INITIAL_NUMBER_OF_PAGES_FOR_TOP_CHUNK 8
@@ -13,8 +12,6 @@
 #define INITIAL_PROCESS_MEMORY_CHUNK_SIZE INITIAL_NUMBER_OF_PAGES_FOR_PROCESS_MEMORY_CHUNK * PAGE_SIZE
 #define MEMORY_CHUNK_HEADER_SIZE_FACTOR 0.1 
 
-extern Vector TOP_MEM_CHUNK_VEC;
-extern bool IS_TOP_MEM_CHUNK_VEC_INITIALISED;
 
 typedef struct ChildMeta {
     void* object_ptr;
@@ -43,10 +40,11 @@ typedef struct MemoryChunk {
     ChildMeta* head_child_meta;
     void* allocation_start_location;
     void* memory;
+    struct MemoryChunk* associated_next_pmc;
 } MemoryChunk;
 
 
-MemoryChunk get_process_memory_chunk();
+MemoryChunk get_process_memory_chunk(size_t);
 void drop_memory_chunk(MemoryChunk);
 
 #endif
