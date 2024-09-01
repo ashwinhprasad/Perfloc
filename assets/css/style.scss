@@ -1,0 +1,23 @@
+@import "{{ site.theme }}";
+
+a:hover, a:focus { color: #069; font-weight: normal; text-decoration: underline; }
+
+body {
+  color: #323232;
+}
+
+a.prev {
+  float: left;
+}
+
+a.prev:before {
+  content: "< "
+}
+
+a.next {
+  float: right;
+}
+
+a.next:after {
+  content: " >"
+}
