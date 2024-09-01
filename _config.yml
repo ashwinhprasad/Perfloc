@@ -5,7 +5,7 @@ description: >-
   general-purpose Custom Memory Allocator in C, inspired by postgres's memory contexts.
   I've decided to document the process of building this memory allocator for future
   references.
-baseurl: "ashwinhprasad.github.io/custom_memory_allocator_tutorial"
+baseurl: "custom_memory_allocator_tutorial"
 url: "" 
 twitter_username: jekyllrb
 github_username:  ashwinhprasad
