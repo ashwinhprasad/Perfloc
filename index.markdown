@@ -14,5 +14,5 @@ Let's answer these questions by understanding the caveats of existing memory mod
 writing our own memory allocator from scratch in C.
 
 # Table of Contents
-{% for part in site.parts %} - [{{part.title}}]({{site.baseurl}}{{part.url}})
+{% for part in site.parts %} - [{{part.title}}]({{part.url}})
 {% endfor %}
