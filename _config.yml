@@ -1,0 +1,18 @@
+title: Build your own Custom Memory Allocator (Perfloc)
+email: ashwinprasad202@gmail.com
+description: >-
+  This is a guide to creating your own Custom Memory Allocator. I have wrote my own
+  general-purpose Custom Memory Allocator in C, inspired by postgres's memory contexts.
+  I've decided to document the process of building this memory allocator for future
+  references.
+baseurl: "custom_memory_allocator_tutorial"
+url: "" 
+twitter_username: jekyllrb
+github_username:  ashwinhprasad
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+- jekyll-remote-theme
+
+collections:
+  parts:
+    output: true
