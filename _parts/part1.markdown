@@ -6,7 +6,7 @@ date: 2024-08-27
 
 Languages like C do not guarantee memory safety. In production-scale applications that use the general C library functions like malloc/free for memory allocation and deallocation, identifying potential memory leaks via dangling pointers and uncollected garbage is tedious. To address such issues, languages like Rust and Zig take a different approach.
 
-## 1) Rust's OwnerShip Model
+## 1) Rust's Ownership Model
 
 Rust has an ownership and borrowing model where a value can only have one owner at a time and when the owner goes out of scope, the memory is collected (irrespective of whether it is on stack or heap). The language itself provides certain compile time rules that evaluate the program and make sure that it is memory-safe.
 
